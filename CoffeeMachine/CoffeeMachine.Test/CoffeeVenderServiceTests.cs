@@ -57,7 +57,7 @@ namespace CoffeeMachine.Test
                 , Coffee = new Coffee(CoffeeSize.Medium)
             };
             service.AddToOrder(orderItem);
-            currentOrder = service.ViewOrder();
+            currentOrder = service.GetOrder();
             Assert.AreEqual(currentOrder.OrderItems.Count, 1);
             var orderItem2 = new CoffeeOrderItem
             {
@@ -66,7 +66,7 @@ namespace CoffeeMachine.Test
                 , Sugars = new List<Sugar> { new Sugar(), new Sugar()}
             };
             service.AddToOrder(orderItem2);
-            currentOrder = service.ViewOrder();
+            currentOrder = service.GetOrder();
             Assert.AreEqual(currentOrder.OrderItems.Count, 2);
             Assert.AreEqual(currentOrder.OrderItems.Sum(x => x.Creamers.Count), 3);
             Assert.AreEqual(currentOrder.OrderItems.Sum(x => x.Sugars.Count), 2);

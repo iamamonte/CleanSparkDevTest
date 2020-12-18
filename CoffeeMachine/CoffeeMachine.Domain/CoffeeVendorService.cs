@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace CoffeeMachine.Domain
 {
@@ -58,9 +59,28 @@ namespace CoffeeMachine.Domain
 
         }
 
-        public Order ViewOrder()
+        public Order GetOrder()
         {
             return _transation;
+        }
+
+        public string DisplayOrder()
+        {
+            StringBuilder orderAsString = new StringBuilder();
+            foreach (var order in _transation.OrderItems) 
+            {
+                orderAsString.AppendLine($"1 {Enum.GetName(typeof(CoffeeSize), order.Coffee.Size)} Coffee ${order.Coffee.Price}");
+                if (order.Creamers.Count > 0) 
+                {
+                    orderAsString.AppendLine($"\t-{order.Creamers.Count} Cream ${order.Creamers.Sum(x=>x.Price)}");
+                }
+                if (order.Sugars.Count > 0)
+                {
+                    orderAsString.AppendLine($"\t-{order.Sugars.Count} Sugar ${order.Sugars.Sum(x=>x.Price)}");
+                }
+            }
+
+            return orderAsString.ToString();
         }
     }
 }

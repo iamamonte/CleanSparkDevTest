@@ -33,7 +33,7 @@ namespace CoffeeMachine.Domain
         /// Exposes current order
         /// </summary>
         /// <returns></returns>
-        Order ViewOrder();
+        Order GetOrder();
         /// <summary>
         /// Dispenses credits back to the user (clears store)
         /// </summary>
@@ -50,6 +50,12 @@ namespace CoffeeMachine.Domain
         /// </summary>
         /// <returns></returns>
         decimal TotalOrder();
+
+        /// <summary>
+        /// Displays the order in a string format.
+        /// </summary>
+        /// <returns></returns>
+        string DisplayOrder();
 
     }
 }
