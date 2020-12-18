@@ -78,5 +78,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoffeeMachine.Domain\CoffeeMachine.Domain.csproj">
+      <Project>{932b6c4b-c702-4fc9-a373-59a30dd137a8}</Project>
+      <Name>CoffeeMachine.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
