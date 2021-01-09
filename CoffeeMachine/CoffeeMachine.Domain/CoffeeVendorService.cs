@@ -6,13 +6,11 @@ namespace CoffeeMachine.Domain
 {
     public class CoffeeVendorService : ICoffeeVendorService
     {
-        private readonly int _maxCreamerCount, _maxSugarCount;
         private decimal _creditStore;
         private Order _transation = new Order();
-        public CoffeeVendorService(int maxCreamerCount = 3, int maxSugarCount = 3) 
+        public CoffeeVendorService() 
         {
-            _maxCreamerCount = maxCreamerCount;
-            _maxSugarCount = maxSugarCount;
+           
         }
         public void AddCredits(decimal amount)
         {
@@ -26,8 +24,6 @@ namespace CoffeeMachine.Domain
 
         public void AddToOrder(CoffeeOrderItem orderItem)
         {
-            if (orderItem.AddOns.Where(x=>x.AddOnType == CoffeeAddOnEnum.Creamer ).Count() > _maxCreamerCount 
-                || orderItem.AddOns.Where(x=>x.AddOnType == CoffeeAddOnEnum.Sugar).Count() > _maxSugarCount) throw new ArgumentOutOfRangeException();
             _transation.OrderItems.Add(orderItem);
         }
 

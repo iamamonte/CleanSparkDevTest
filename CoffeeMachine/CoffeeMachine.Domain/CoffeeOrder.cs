@@ -6,6 +6,7 @@ namespace CoffeeMachine.Domain
     {
         public Coffee Coffee { get; set; }
         public List<CoffeeAddOn> AddOns { get; set; } = new List<CoffeeAddOn>();
+        public bool IsValid { get; set; } = true;
 
     }
 

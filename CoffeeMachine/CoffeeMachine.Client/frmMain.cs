@@ -14,6 +14,7 @@ namespace CoffeeMachine.Client
 	public partial class frmMain : Form
 	{
 		private readonly ICoffeeVendorService vendorService = new CoffeeVendorService();
+		private readonly ICoffeeValidationStrategy addOnValidator = new CoffeeAddOnValidationStrategy();
 		public frmMain()
 		{
 			InitializeComponent();
@@ -37,31 +38,36 @@ namespace CoffeeMachine.Client
 					break;
 			}
 
-			//add to order
-			try
-			{
-				var orderItem = new CoffeeOrderItem { Coffee = new Coffee(coffeeSize) };
-				for (int i = 0; i < inputCreamerCount.Value; i++)
-				{
-					orderItem.AddOns.Add(new Creamer());
-				}
+            //add to order
+            var orderItem = new CoffeeOrderItem { Coffee = new Coffee(coffeeSize) };
+            for (int i = 0; i < inputCreamerCount.Value; i++)
+            {
+                orderItem.AddOns.Add(new Creamer());
+            }
 
-				for (int i = 0; i < inputSugarCount.Value; i++)
-				{
-					orderItem.AddOns.Add(new Sugar());
-				}
+            for (int i = 0; i < inputSugarCount.Value; i++)
+            {
+                orderItem.AddOns.Add(new Sugar());
+            }
+            //validate order item
+            var addOnValidationResults = addOnValidator.ValidateOrder(orderItem);
+            if (orderItem.IsValid)
+            {
+                vendorService.AddToOrder(orderItem);
+                txtCurrentOrder.Text = vendorService.DisplayOrder();
+            }
+            else
+            {
+                foreach (var result in addOnValidationResults)
+                {
+                    lblErrorMessage.Text += result.Message;
+                }
+            }
 
-				vendorService.AddToOrder(orderItem);
-				txtCurrentOrder.Text = vendorService.DisplayOrder();
-			}
-			catch (ArgumentOutOfRangeException ex) 
-			{
-				lblErrorMessage.Text = ex.Message;
-				return;
-			}
 
-			//show order
-			lblOrderTotal.Text = $"${vendorService.TotalOrder()}";
+
+            //show order
+            lblOrderTotal.Text = $"${vendorService.TotalOrder()}";
 		}
 
 		private void btnAddPayment_Click(object sender, EventArgs e)

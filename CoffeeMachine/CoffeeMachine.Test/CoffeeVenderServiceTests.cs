@@ -97,16 +97,18 @@ namespace CoffeeMachine.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void COFFEESERVICE_Does_reject_invalid_order_items() 
         {
             ICoffeeVendorService service = new CoffeeVendorService();
+            ICoffeeValidationStrategy validator = new CoffeeAddOnValidationStrategy();
             var invalidOrderItem = new CoffeeOrderItem
             {
                 AddOns = new List<CoffeeAddOn> { new Creamer(), new Creamer(), new Creamer(), new Creamer(), new Sugar(), new Sugar() }  
            
             };
-            service.AddToOrder(invalidOrderItem);
+            var validationResults = validator.ValidateOrder(invalidOrderItem);
+            Assert.IsTrue(validationResults.Any(x=>x.GetType() == typeof(CoffeeAddOnValidationError)));
+            Assert.IsFalse(invalidOrderItem.IsValid);
         }
 
         [TestMethod]
