@@ -86,7 +86,7 @@
             // 
             this.inputSugarCount.Location = new System.Drawing.Point(96, 86);
             this.inputSugarCount.Maximum = new decimal(new int[] {
-            3,
+            10,
             0,
             0,
             0});
@@ -98,7 +98,7 @@
             // 
             this.inputCreamerCount.Location = new System.Drawing.Point(96, 57);
             this.inputCreamerCount.Maximum = new decimal(new int[] {
-            3,
+            10,
             0,
             0,
             0});
