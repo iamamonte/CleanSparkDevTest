@@ -5,8 +5,7 @@ namespace CoffeeMachine.Domain
     public class CoffeeOrderItem
     {
         public Coffee Coffee { get; set; }
-        public List<Creamer> Creamers { get; set; } = new List<Creamer>();
-        public List<Sugar> Sugars { get; set; } = new List<Sugar>();
+        public List<CoffeeAddOn> AddOns { get; set; } = new List<CoffeeAddOn>();
 
     }
 

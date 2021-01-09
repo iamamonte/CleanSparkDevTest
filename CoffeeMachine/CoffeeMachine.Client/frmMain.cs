@@ -43,12 +43,12 @@ namespace CoffeeMachine.Client
 				var orderItem = new CoffeeOrderItem { Coffee = new Coffee(coffeeSize) };
 				for (int i = 0; i < inputCreamerCount.Value; i++)
 				{
-					orderItem.Creamers.Add(new Creamer());
+					orderItem.AddOns.Add(new Creamer());
 				}
 
 				for (int i = 0; i < inputSugarCount.Value; i++)
 				{
-					orderItem.Sugars.Add(new Sugar());
+					orderItem.AddOns.Add(new Sugar());
 				}
 
 				vendorService.AddToOrder(orderItem);

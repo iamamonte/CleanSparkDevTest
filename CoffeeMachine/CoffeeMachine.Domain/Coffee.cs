@@ -49,14 +49,14 @@ namespace CoffeeMachine.Domain
         }
     }
 
-    public class Creamer : OrderBase 
+    public class Creamer : CoffeeAddOn 
     {
-        public Creamer() : base(0.5) { }
+        public Creamer() : base( CoffeeAddOnEnum.Creamer,0.5) { }
     }
 
-    public class Sugar : OrderBase 
+    public class Sugar : CoffeeAddOn 
     {
-        public Sugar() : base(0.25){ }
+        public Sugar() : base(CoffeeAddOnEnum.Sugar, 0.25){ }
     }
 
    

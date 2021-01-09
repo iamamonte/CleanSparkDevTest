@@ -26,7 +26,8 @@ namespace CoffeeMachine.Domain
 
         public void AddToOrder(CoffeeOrderItem orderItem)
         {
-            if (orderItem.Creamers.Count > _maxCreamerCount || orderItem.Sugars.Count > _maxSugarCount) throw new ArgumentOutOfRangeException();
+            if (orderItem.AddOns.Where(x=>x.AddOnType == CoffeeAddOnEnum.Creamer ).Count() > _maxCreamerCount 
+                || orderItem.AddOns.Where(x=>x.AddOnType == CoffeeAddOnEnum.Sugar).Count() > _maxSugarCount) throw new ArgumentOutOfRangeException();
             _transation.OrderItems.Add(orderItem);
         }
 
@@ -45,8 +46,7 @@ namespace CoffeeMachine.Domain
 
         public decimal TotalOrder()
         {
-            return (decimal)_transation.OrderItems.Sum(orderItem => orderItem.Coffee.Price + orderItem.Creamers.Sum(y => y.Price) + orderItem.Sugars.Sum(y => y.Price));
-            
+            return (decimal)_transation.OrderItems.Sum(orderItem => orderItem.Coffee.Price + orderItem.AddOns.Sum(y => y.Price));
         }
 
         public void TransactOrder()
@@ -70,14 +70,15 @@ namespace CoffeeMachine.Domain
             foreach (var order in _transation.OrderItems) 
             {
                 orderAsString.AppendLine($"1 {Enum.GetName(typeof(CoffeeSize), order.Coffee.Size)} Coffee ${order.Coffee.Price}");
-                if (order.Creamers.Count > 0) 
+
+                foreach (var addOn in order.AddOns.GroupBy(x => x.AddOnType)
+                    .Select(x => new { @Name = Enum.GetName(typeof(CoffeeAddOnEnum), x.Key)
+                    , @TotalPrice = x.Sum(y => y.Price)
+                    , @Count = x.Count() })) 
                 {
-                    orderAsString.AppendLine($"\t-{order.Creamers.Count} Cream ${order.Creamers.Sum(x=>x.Price)}");
-                }
-                if (order.Sugars.Count > 0)
-                {
-                    orderAsString.AppendLine($"\t-{order.Sugars.Count} Sugar ${order.Sugars.Sum(x=>x.Price)}");
-                }
+                    orderAsString.AppendLine($"\t-{addOn.Count} {addOn.Name} ${addOn.TotalPrice}");
+                } 
+                
             }
 
             return orderAsString.ToString();
