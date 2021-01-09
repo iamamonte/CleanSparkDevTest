@@ -81,15 +81,18 @@ namespace CoffeeMachine.Client
 				lblErrorMessage.Text = "Invalid payment input. Please use an increment of $0.05 with a mininum of $0.05 and a maximum of $20.00";
 				return;
 			}
-			try
+			
+			var transactionResult = vendorService.AddCredits(amount);
+			if (!transactionResult.Success) 
 			{
-				vendorService.AddCredits(amount);
-				lblCurrentPayment.Text = $"${vendorService.GetCredits()}";
+				foreach (var error in transactionResult.TransactionErrors) 
+				{
+					lblErrorMessage.Text += error.FriendlyMessage;
+				}
 			}
-			catch (ArgumentException ex) 
-			{
-				lblErrorMessage.Text = ex.Message;
-			}
+			lblCurrentPayment.Text = $"${vendorService.GetCredits()}";
+			
+			
 		
 		}
 
@@ -98,26 +101,21 @@ namespace CoffeeMachine.Client
 			lblErrorMessage.Text = "";
 			lblChange.Text = "";
 			if (vendorService.GetOrder().OrderItems.Count == 0) return;
-			var totalAmount = vendorService.TotalOrder();
-			var creditAvailable = vendorService.GetCredits();
-			if (totalAmount > creditAvailable) 
+			
+			var transactionResult = vendorService.TransactOrder();
+			if (!transactionResult.Success) 
 			{
-				lblErrorMessage.Text = "Please input more payments in order to fulfill this order.";
-				return;
+				foreach (var error in transactionResult.TransactionErrors) 
+				{
+					lblErrorMessage.Text += error.FriendlyMessage;
+				}
 			}
+			lblCurrentPayment.Text = $"${vendorService.GetCredits()}";
+			lblOrderTotal.Text = $"${vendorService.TotalOrder()}";
+			txtCurrentOrder.Text = vendorService.DisplayOrder();
 
-			try
-			{
-				vendorService.TransactOrder();
-				lblCurrentPayment.Text = $"${vendorService.GetCredits()}";
-				lblOrderTotal.Text = $"${vendorService.TotalOrder()}";
-				txtCurrentOrder.Text = vendorService.DisplayOrder();
-
-			}
-			catch (Exception ex) 
-			{
-				lblErrorMessage.Text = ex.Message;
-			}
+			
+			
 		}
 
 		private void btnGetChange_Click(object sender, EventArgs e)

@@ -14,36 +14,43 @@ namespace CoffeeMachine.Test
         {
             ICoffeeVendorService service = new CoffeeVendorService();
             decimal addedCredits = 15.25M;
-            service.AddCredits(addedCredits);
+            var transactionResult = service.AddCredits(addedCredits);
+            Assert.IsTrue(transactionResult.Success);
             decimal dispensedChange = service.DispenseCredits();
             Assert.AreEqual(dispensedChange, addedCredits);
             decimal emptiedCredits = service.DispenseCredits();
             Assert.AreEqual(0, emptiedCredits);
 
+
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void COFFEESERVICE_Does_reject_invalid_credit_minimum() 
         {
             ICoffeeVendorService service = new CoffeeVendorService();
-            service.AddCredits(0.01M);
+            var transactionResult = service.AddCredits(0.01M);
+            Assert.IsFalse(transactionResult.Success);
+            Assert.IsTrue(transactionResult.TransactionErrors.Any(x => x.GetType() == typeof(BelowMinimumCreditAmountTransactionError)));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        
         public void COFFEESERVICE_Does_reject_invalid_credit_increment()
         {
             ICoffeeVendorService service = new CoffeeVendorService();
-            service.AddCredits(5.01M);
+            var transactionResult = service.AddCredits(5.01M);
+            Assert.IsFalse(transactionResult.Success);
+            Assert.IsTrue(transactionResult.TransactionErrors.Any(x => x.GetType() == typeof(InvalidCreditDenominationTransactionError)));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        
         public void COFFEESERVICE_Does_reject_invalid_credit_maximum()
         {
             ICoffeeVendorService service = new CoffeeVendorService();
-            service.AddCredits(20.01M);
+            var transactionResult = service.AddCredits(20.01M);
+            Assert.IsFalse(transactionResult.Success);
+            Assert.IsTrue(transactionResult.TransactionErrors.Any(x => x.GetType() == typeof(AboveMaximumCreditAmountTransactionError)));
         }
 
         [TestMethod]
@@ -112,7 +119,6 @@ namespace CoffeeMachine.Test
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
         public void COFFEESERVICE_Does_reject_insufficient_fund_transaction() 
         {
             ICoffeeVendorService service = new CoffeeVendorService();
@@ -121,7 +127,9 @@ namespace CoffeeMachine.Test
             service.AddToOrder(new CoffeeOrderItem { Coffee = new Coffee(CoffeeSize.Large) });
             service.AddToOrder(new CoffeeOrderItem { Coffee = new Coffee(CoffeeSize.Large) });
             service.AddToOrder(new CoffeeOrderItem { Coffee = new Coffee(CoffeeSize.Large) });
-            service.TransactOrder();
+            var transactionResult = service.TransactOrder();
+            Assert.IsFalse(transactionResult.Success);
+            Assert.IsTrue(transactionResult.TransactionErrors.Any(x => x.GetType() == typeof(InsufficientFundsTransactionError)));
         }
         [TestMethod]
         public void COFFEESERVICE_Can_transact_order() 
@@ -135,7 +143,8 @@ namespace CoffeeMachine.Test
                 , AddOns = new List<CoffeeAddOn> { new Creamer(), new Sugar() }
             });
             Assert.AreEqual(4.75M, service.TotalOrder());
-            service.TransactOrder();
+            var transactionResult = service.TransactOrder();
+            Assert.IsTrue(transactionResult.Success);
             decimal change = service.DispenseCredits();
             Assert.AreEqual(change, 6);
         }

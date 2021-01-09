@@ -15,20 +15,19 @@ namespace CoffeeMachine.Domain
         /// Adds an item to the internally tracked order. 
         /// </summary>
         /// <param name="orderItem"></param>
-        /// <exception cref="ArgumentOutOfRangeException">Number of creamers or sugars is out of bounds.</exception>
         void AddToOrder(CoffeeOrderItem orderItem);
         /// <summary>
-        /// Adds currency to the store. Must be an increment of $0.05 with a max of $20.
+        /// Adds currency to the store. Check <see cref="TransactionResult.Success"/> and <see cref="TransactionResult.TransactionErrors"/> in return value for information on success of transaction.
         /// </summary>
         /// <param name="amount"></param>
-        /// <exception cref="ArgumentException">Credit increment invalid or out of bounds.</exception>
-        void AddCredits(decimal amount);
+        /// <returns><see cref="TransactionResult"/></returns>
+        TransactionResult AddCredits(decimal amount);
         /// <summary>
         /// Verifies necessary funds, transacts and clears the order. Follow up with <see cref="DispenseCredits"/>
         /// </summary>
         /// <param name="order"></param>
-        /// <exception cref="Exception">Insufficient funds are available.</exception>
-        void TransactOrder();
+        /// <returns><see cref="TransactionResult"/></returns>
+        TransactionResult TransactOrder();
         /// <summary>
         /// Exposes current order
         /// </summary>
